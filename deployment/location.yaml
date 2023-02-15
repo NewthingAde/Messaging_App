@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: location
+  name: location
+spec:
+  ports:
+  - name: location
+    nodePort: 30010
+    port: 5009
+    protocol: TCP
+    targetPort: 5009
+  selector:
+    app: location
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: location
+  name: location
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: location
+  template:
+    metadata:
+      labels:
+        app: location
+    spec:
+      containers:
+      - image: newthingade/location:v1
+        name: location
+        imagePullPolicy: Always
+        env:
+        - name: LOCATION
+          valueFrom:
+            configMapKeyRef:
+              name: kafka-dev
+              key: LOCATION
+        - name: KAFKA_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: kafka-dev
+              key: KAFKA_SERVER
+      restartPolicy: Always

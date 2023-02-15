@@ -7,3 +7,13 @@ data:
   DB_PORT: "5432"
 metadata:
   name: db-env
+
+---
+
+apiVersion: v1
+data:
+  KAFKA_SERVER: kafka-0.kafka-headless.default.svc.cluster.local:9092
+  LOCATION: location-data
+kind: ConfigMap
+metadata:
+  name: kafka-dev

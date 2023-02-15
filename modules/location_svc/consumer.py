@@ -3,11 +3,11 @@ import os
 from kafka import KafkaConsumer
 from utils import save_location
 
-TOPIC_NAME = os.environ["TOPIC_NAME"]
+LOCATION = os.environ["LOCATION"]
 KAFKA_SERVER = os.environ["KAFKA_SERVER"]
 
 # Create the kafka consumer
-consumer = KafkaConsumer(TOPIC_NAME, bootstrap_servers=[KAFKA_SERVER])
+consumer = KafkaConsumer(LOCATION, bootstrap_servers=[KAFKA_SERVER])
 
 while True:
     for message in consumer:

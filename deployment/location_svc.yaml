@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: location-svc
+  name: location-svc
+spec:
+  ports:
+  - name: location-svc
+    port: 5007
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: location-svc
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: location-svc
+  name: location-svc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: location-svc
+  template:
+    metadata:
+      labels:
+        app: location-svc
+    spec:
+      containers:
+      - image: newthingade/location_svc:v1
+        name: location-svc
+        imagePullPolicy: Always
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-env
+              key: DB_USERNAME
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: DB_PASSWORD
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-env
+              key: DB_NAME
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: db-env
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: db-env
+              key: DB_PORT
+        - name: TOPIC_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: kafka-dev
+              key: LOCATION
+        - name: KAFKA_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: kafka-dev
+              key: KAFKA_SERVER
+      restartPolicy: Always
