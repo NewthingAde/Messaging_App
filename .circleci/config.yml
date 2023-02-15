@@ -26,14 +26,14 @@ jobs:
             docker tag location newthingade/location:v1
 
             docker build -t location_svc ./modules/location_svc
-            docker tag udagram-api-user newthingade/locations_svc:v1
+            docker tag location_svc newthingade/locations_svc:v1
             
             docker build -t api_people ./modules/api_people
             docker tag api_people newthingade/api_people:v1
 
 
             docker build -t api_connections ./modules/api_connections
-            docker tag udagram-reverseproxy newthingade/api_connections:v1
+            docker tag api_connections newthingade/api_connections:v1
 
             echo "-------- All images succesfully built----------"
 
