@@ -26,7 +26,7 @@ jobs:
             docker tag location newthingade/location:v1
 
             docker build -t location_svc ./modules/location_svc
-            docker tag location_svc newthingade/locations_svc:v1
+            docker tag location_svc newthingade/location_svc:v1
             
             docker build -t api_people ./modules/api_people
             docker tag api_people newthingade/api_people:v1
