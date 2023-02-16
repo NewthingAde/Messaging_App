@@ -1,3 +1,5 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/NewthingAde/Messaging_App/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/NewthingAde/Messaging_App/tree/master)
+
 # UdaConnect
 ## Overview
 ### Background
