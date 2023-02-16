@@ -92,6 +92,61 @@ Type `exit` to exit the virtual OS and you will find yourself back in your compu
 
 Afterwards, you can test that `kubectl` works by running a command like `kubectl describe services`. It should not return any errors.
 
+### Additional steps 
+I used CI/CD to build and push my images to dockerhub
+
+<img width="1426" alt="cici" src="https://user-images.githubusercontent.com/80678596/219341164-a4cd9d5f-4528-4f69-b55b-acd1cb9bcc2d.png">
+
+                                     .circleci/config.yml
+                                     
+                        version: 2.1
+                        jobs:
+                          lint-app:
+                            docker:
+                              - image: circleci/node:13.8.0
+                            steps:
+                              - checkout
+                          build-docker:
+                            machine: true
+                            steps:
+                              - checkout
+                              - run:
+                                  name: Build docker container for each microservices
+                                  command: |
+                                    echo "--------- Installing dependencies-----------"
+                                    sudo curl -LO https://nodejs.org/dist/v18.0.0/node-v18.0.0-linux-x64.tar.xz
+                                    sudo tar -xvf node-v18.0.0-linux-x64.tar.xz
+                                    sudo cp -r node-v18.0.0-linux-x64/{bin,include,lib,share} /usr/
+                                    node --version => v18.0.0
+                                    sudo apt install nodejs
+                                    echo "--------- The images is Building ------------"
+                                    docker build -t location ./modules/location
+                                    docker tag location newthingade/location:v1
+                                    docker build -t location_svc ./modules/location_svc
+                                    docker tag location_svc newthingade/location_svc:v1
+
+                                    docker build -t api_people ./modules/api_people
+                                    docker tag api_people newthingade/api_people:v1
+                                    docker build -t api_connections ./modules/api_connections
+                                    docker tag api_connections newthingade/api_connections:v1
+                                    echo "-------- All images succesfully built----------"
+                                    echo " ------- login in to hub--------"
+                                    docker login -u newthingade -p $DOCKERPASS
+                                    echo "-------------- Pushing images to dockerhub-------"
+
+                                    docker push newthingade/location:v1
+                                    docker push newthingade/location_svc:v1
+                                    docker push newthingade/api_people:v1
+                                    docker push newthingade/api_connections:v1
+                        workflows:
+                          default:
+                            jobs:
+                              - lint-app
+                              - build-docker:
+                                  requires: [lint-app]           
+
+                                    
+
 ### Steps
 1. `kubectl apply -f deployment/db-configmap.yaml` - Set up environment variables for the pods
 2. `kubectl apply -f deployment/db-secret.yaml` - Set up secrets for the pods
