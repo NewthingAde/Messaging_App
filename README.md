@@ -46,7 +46,7 @@ gRPC: gRPC is a high-performance, open-source, remote procedure call (RPC) frame
 This choice of message passing technique depends on the specific requirements and use case of the distributed system. For example, Kafka is well suited for real-time event processing, REST APIs are commonly used in web services, and gRPC is ideal for high-performance and low-latency communication between different services.
 
 
-            ![Architectural_Diagram](https://user-images.githubusercontent.com/80678596/219333648-f2bbadf1-0676-42c8-9a59-475783c5604a.png)
+  ![Architectural_Diagram (1)](https://user-images.githubusercontent.com/80678596/219407320-b3347b8f-6544-4dee-b186-6f1a69d6e365.png)
             
             
 ### Environment Setup
