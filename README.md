@@ -30,6 +30,21 @@ We will be installing the tools that we'll need to use for getting our environme
 4. [Install VirtualBox](https://www.virtualbox.org/wiki/Downloads) with at least version 6.0
 5. [Install Vagrant](https://www.vagrantup.com/docs/installation) with at least version 2.0
 
+### Architectural design 
+Kafka, REST APIs, and gRPC are three different message passing techniques that can be adopted in the architectural design of a distributed system.
+
+Kafka: Kafka is a distributed streaming platform that is designed to handle large volumes of data in real-time. Kafka uses a publish-subscribe messaging model, where producers send messages to a topic, and consumers receive messages from the topic. Kafka is well suited for handling large volumes of data and is often used for processing data in real-time, such as event processing, data pipelines, and data processing.
+
+REST APIs: Representational State Transfer (REST) is an architectural style that is commonly used in web services. REST APIs use the HTTP protocol for communication and provide a standard way for different systems to interact with each other. REST APIs use HTTP methods such as GET, POST, PUT, and DELETE to perform operations on resources. REST APIs are widely used for building web services and integrating different systems.
+
+gRPC: gRPC is a high-performance, open-source, remote procedure call (RPC) framework that is developed by Google. gRPC uses protocol buffers as its interface definition language (IDL) and can support multiple programming languages. gRPC allows different services to communicate with each other using remote procedure calls. It uses HTTP/2 for communication and supports bi-directional streaming, flow control, and error handling.
+
+This choice of message passing technique depends on the specific requirements and use case of the distributed system. For example, Kafka is well suited for real-time event processing, REST APIs are commonly used in web services, and gRPC is ideal for high-performance and low-latency communication between different services.
+
+
+            ![Architectural_Diagram](https://user-images.githubusercontent.com/80678596/219333648-f2bbadf1-0676-42c8-9a59-475783c5604a.png)
+            
+            
 ### Environment Setup
 To run the application, you will need a K8s cluster running locally and to interface with it via `kubectl`. We will be using Vagrant with VirtualBox to run K3s.
 
@@ -87,6 +102,41 @@ Manually applying each of the individual `yaml` files is cumbersome but going th
 
 Note: The first time you run this project, you will need to seed the database with dummy data. Use the command `sh scripts/run_db_command.sh <POD_NAME>` against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`). Subsequent runs of `kubectl apply` for making changes to deployments or services shouldn't require you to seed the database again!
 
+
+                # Install helm on the guest VM
+                curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+
+                chmod 700 get_helm.sh
+
+                ./get_helm.sh
+                
+                helm install my-release bitnami/kafka
+                
+                helm repo add my-repo https://charts.bitnami.com/bitnami
+                
+                helm install kafka my-repo/kafka  --kubeconfig ~/.kube/config
+
+                # verify the installation
+                kubectl get pods
+
+                # Wait until 'kafka-0' pod is in the running state, then run the following commands
+
+                # Get the pod name for the kafka container
+                export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=kafka,app.kubernetes.io/instance=                         kafka,app.kubernetes.io/component=kafka" -o jsonpath="{.items[0].metadata.name}")
+
+                export BOOTSTRAP_SERVER=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=kafka,app.kubernetes.io/instance=kafka,app.kubernetes.io/component=kafka" -o jsonpath="{.items[0].spec.subdomain}")
+
+                # Set the topic name
+                export TOPIC="location-data"
+
+                # Create topic
+                kubectl exec -it $POD_NAME -- kafka-topics.sh \
+                    --create --bootstrap-server $BOOTSTRAP_SERVER:9092 \
+                    --replication-factor 1 --partitions 1 \
+                    --topic $TOPIC
+
+
+
 ### Verifying it Works
 Once the project is up and running, you should be able to see 3 deployments and 3 services in Kubernetes:
 `kubectl get pods` and `kubectl get services` - should both return `udaconnect-app`, `udaconnect-api`, and `postgres`
@@ -96,6 +146,24 @@ These pages should also load on your web browser:
 * `http://localhost:30001/` - OpenAPI Documentation
 * `http://localhost:30001/api/` - Base path for API
 * `http://localhost:30000/` - Frontend ReactJS Application
+* `http://localhost:30002/` - OpenAPI Documentation
+* `http://localhost:30002/api/` - Base path for API
+* `http://localhost:30009/` - Frontend ReactJS Application
+            
+            
+<img width="1395" alt="1" src="https://user-images.githubusercontent.com/80678596/219338639-970724d4-d5c9-4531-a8f3-ffc68b13da59.png">
+
+
+<img width="1395" alt="1" src="https://user-images.githubusercontent.com/80678596/219338639-970724d4-d5c9-4531-a8f3-ffc68b13da59.png">
+
+
+
+![Pod_screenshot](https://user-images.githubusercontent.com/80678596/219339141-c8aea9f3-39aa-4402-b24f-bd1cf4acbcd1.png)
+
+
+![service](https://user-images.githubusercontent.com/80678596/219339308-ff567053-f809-44aa-ae5a-8cf5c162b669.png)
+
+
 
 #### Deployment Note
 You may notice the odd port numbers being served to `localhost`. [By default, Kubernetes services are only exposed to one another in an internal network](https://kubernetes.io/docs/concepts/services-networking/service/). This means that `udaconnect-app` and `udaconnect-api` can talk to one another. For us to connect to the cluster as an "outsider", we need to a way to expose these services to `localhost`.
