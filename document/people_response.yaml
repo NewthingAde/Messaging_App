@@ -1,0 +1,21 @@
+---
+- last_name: Fargo
+  company_name: Alpha Omega Upholstery
+  first_name: Taco
+  id: 5
+- last_name: Shader
+  company_name: USDA
+  first_name: Frank
+  id: 6
+- last_name: Trexler
+  company_name: Hampton, Hampton and McQuill
+  first_name: Pam
+  id: 1
+- last_name: Badman
+  company_name: Paul Badman & Associates
+  first_name: Paul
+  id: 8
+- last_name: Spring
+  company_name: The Chicken Sisters Restaurant
+  first_name: Otto
+  id: 9

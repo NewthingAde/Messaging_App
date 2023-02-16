@@ -1,0 +1,12 @@
+Kafka, REST APIs, and gRPC are three different message passing techniques that was adopted in the architectural design.
+
+The choice of message passing is a good use case of the distributed system. For example, Kafka is well suited for real-time event processing, REST APIs are commonly used in web services, and gRPC is ideal for high-performance and low-latency communication between different services.
+
+Kafka: Kafka is a distributed streaming platform that is designed to handle large volumes of data in real-time. Kafka uses a publish-subscribe messaging model, where producers send messages to a topic, and consumers receive messages from the topic. Kafka is well suited for handling large volumes of data and is often used for processing data in real-time, such as event processing, data pipelines, and data processing.
+
+REST APIs: Representational State Transfer (REST) is an architectural style that is commonly used in web services. REST APIs use the HTTP protocol for communication and provide a standard way for different systems to interact with each other. REST APIs use HTTP methods such as GET, POST, PUT, and DELETE to perform operations on resources. REST APIs are widely used for building web services and integrating different systems.
+
+gRPC: gRPC is a high-performance, open-source, remote procedure call (RPC) framework that is developed by Google. gRPC uses protocol buffers as its interface definition language (IDL) and can support multiple programming languages. gRPC allows different services to communicate with each other using remote procedure calls. It uses HTTP/2 for communication and supports bi-directional streaming, flow control, and error handling.
+
+
+
